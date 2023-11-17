@@ -113,7 +113,7 @@ def train_pytorch_model(model, train_loader, val_loader, criterion, optimizer, e
 
         # Save the model after training 1 epoch
         if save_model_flag:
-            torch.save(model.state_dict(), "pytorch_model_{}.pth".format(epoch))
+            torch.save(model.state_dict(), "pytorch_model_{}.pth".format(epoch+1))
 
         with torch.no_grad():
             val_loss = 0.0

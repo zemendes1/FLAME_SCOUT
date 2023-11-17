@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 import FLAME_SCOUT_model as FL_Model
 
 # Alter the path to the model accordingly
-model_path = "pytorch_model_0.pth"
+model_path = "pytorch_model_8.pth"
 
 # Get files in current working directory
 files = os.listdir()
@@ -42,7 +42,8 @@ if 'Dataset' in files and model_path in files:
 
     # Load the model
     model = FL_Model.FLAME_SCOUT_Model(num_classes=2)
-    model.load_state_dict(torch.load(model_path))
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.load_state_dict(torch.load(model_path, map_location=device))
 
     # Print Model
     print(model)
