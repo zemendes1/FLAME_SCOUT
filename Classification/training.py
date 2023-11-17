@@ -18,6 +18,8 @@ from torch.utils.data import DataLoader
 # import other files
 import FLAME_SCOUT_model as FL_Model
 
+import time
+
 """Download the Dataset for Classification:"""
 
 # Get files in current working directory
@@ -38,24 +40,24 @@ training_dataset = torchvision.datasets.ImageFolder(Training_path, transform=tra
 testing_dataset = torchvision.datasets.ImageFolder(Testing_path, transform=transform)
 
 # Split the training data (80%)
-train_len = len(training_dataset.samples)
+training_len = len(training_dataset.samples)
 val_split = 0.2
-val_len = int(val_split * train_len)
-train_len -= val_len
-train_dataset, validation_dataset = torch.utils.data.random_split(training_dataset, [train_len, val_len])
+val_len = int(val_split * training_len)
+training_len -= val_len
+training_dataset, validation_dataset = torch.utils.data.random_split(training_dataset, [training_len, val_len])
 
 # Create the dataloaders
-batch_size_training = 100
+batch_size_training = 32
 training_loader = DataLoader(training_dataset, batch_size=batch_size_training, shuffle=True, num_workers=0)
 
-batch_size_validation = 100
+batch_size_validation = 32
 validation_loader = DataLoader(validation_dataset, batch_size=batch_size_training, shuffle=True, num_workers=0)
 
-batch_size_testing = 100
+batch_size_testing = 32
 testing_loader = DataLoader(testing_dataset, batch_size=batch_size_testing, shuffle=True, num_workers=0)
 
-print('Length of the Training set: ' + str(train_len))
-print('Length of the Validation set: ' + str(len(testing_dataset.samples)))
+print('Length of the Training set: ' + str(training_dataset.samples))
+print('Length of the Validation set: ' + str(len(validation_dataset.samples)))
 print('Length of the Testing set: ' + str(len(testing_dataset.samples)))
 
 class_map = {0: 'Fire', 1: 'No Fire'}
@@ -81,6 +83,7 @@ print(model)
 
 def train_pytorch_model(model, train_loader, val_loader, criterion, optimizer, epochs, device, save_model_flag=False):
     for epoch in range(epochs):
+        epoch_start_time = time.time()  # Record the start time of the epoch
 
         # Initialize Accuracy Values
         training_loss = 0
@@ -101,6 +104,7 @@ def train_pytorch_model(model, train_loader, val_loader, criterion, optimizer, e
             _, predicted = outputs.max(1)
             total += labels.size(0)
             correct += predicted.eq(labels).sum().item()
+            # print("This is batch {} of epoch {}".format(total/32,epoch))
 
         training_loss /= len(train_loader)
         training_accuracy = correct / total
@@ -128,19 +132,35 @@ def train_pytorch_model(model, train_loader, val_loader, criterion, optimizer, e
 
         val_loss /= len(val_loader)
         accuracy = correct / total
+        epoch_end_time = time.time()  # Record the end time of the epoch
+        epoch_time = epoch_end_time - epoch_start_time  # Calculate the time taken for the epoch
+        epoch_time_str = "{:0>2}:{:05.2f}".format(int(epoch_time // 60), epoch_time % 60)
 
-        print(
-            f"Epoch [{epoch + 1}/{epochs}]- Training Loss: {training_loss:.4f} - Training Accuracy: {100 * training_accuracy:.2f} - Validation Loss: {val_loss:.4f} - Validation Accuracy: {100 * accuracy:.2f}%")
+        file_path = 'output.txt'
+        with open(file_path, 'a') as file:
+            # Assuming you have the variables epoch, epochs, training_loss, training_accuracy, val_loss, and accuracy defined
+            content = f"Epoch [{epoch + 1}/{epochs}] ({epoch_time_str}))- Training Loss: {training_loss:.4f} - Training Accuracy: {100 * training_accuracy:.2f}% - Validation Loss: {val_loss:.4f} - Validation Accuracy: {100 * accuracy:.2f}%"
 
+            # Print the content to the console
+            print(content)
+
+            # Write the content to the file
+            print(content, file=file)
+
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Define loss function and optimizer
 criterion = nn.CrossEntropyLoss()
+criterion = criterion.to(device)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
 # Define number of epochs
-epochs = 10
+epochs = 25
 
-# Set device
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# Move the model to the device
+model = model.to(device)
 
-train_pytorch_model(model, training_loader, validation_loader, criterion, optimizer, epochs, device, save_model_flag=True)
+# Train the model
+train_pytorch_model(model, training_loader, validation_loader, criterion, optimizer, epochs, device,
+                    save_model_flag=True)
