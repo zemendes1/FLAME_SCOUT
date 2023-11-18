@@ -20,8 +20,6 @@ import FLAME_SCOUT_model as FL_Model
 
 import time
 
-"""Download the Dataset for Classification:"""
-
 # Get files in current working directory
 files = os.listdir()
 
@@ -56,9 +54,9 @@ validation_loader = DataLoader(validation_dataset, batch_size=batch_size_trainin
 batch_size_testing = 32
 testing_loader = DataLoader(testing_dataset, batch_size=batch_size_testing, shuffle=True, num_workers=0)
 
-print('Length of the Training set: ' + str(training_dataset.samples))
-print('Length of the Validation set: ' + str(len(validation_dataset.samples)))
-print('Length of the Testing set: ' + str(len(testing_dataset.samples)))
+print('Length of the Training set: '+str(len(training_dataset)))
+print('Length of the Validation set: '+str(len(validation_dataset)))
+print('Length of the Testing set: '+str(len(testing_dataset)))
 
 class_map = {0: 'Fire', 1: 'No Fire'}
 
@@ -104,7 +102,10 @@ def train_pytorch_model(model, train_loader, val_loader, criterion, optimizer, e
             _, predicted = outputs.max(1)
             total += labels.size(0)
             correct += predicted.eq(labels).sum().item()
-            # print("This is batch {} of epoch {}".format(total/32,epoch))
+            
+            batch_number = total/32
+            if batch_number % 100 ==0:
+              print("This is batch {} of epoch {}".format(batch_number,epoch+1))
 
         training_loss /= len(train_loader)
         training_accuracy = correct / total
@@ -156,11 +157,11 @@ criterion = criterion.to(device)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
 # Define number of epochs
-epochs = 25
+epochs = 50
 
 # Move the model to the device
+model = nn.DataParallel(model)
 model = model.to(device)
 
 # Train the model
-train_pytorch_model(model, training_loader, validation_loader, criterion, optimizer, epochs, device,
-                    save_model_flag=True)
+train_pytorch_model(model, training_loader, validation_loader, criterion, optimizer, epochs, device, save_model_flag=True)
