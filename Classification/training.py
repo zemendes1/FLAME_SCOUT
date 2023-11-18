@@ -140,7 +140,7 @@ def train_pytorch_model(model, train_loader, val_loader, criterion, optimizer, e
         file_path = 'output.txt'
         with open(file_path, 'a') as file:
             # Assuming you have the variables epoch, epochs, training_loss, training_accuracy, val_loss, and accuracy defined
-            content = f"Epoch [{epoch + 1}/{epochs}] ({epoch_time_str}))- Training Loss: {training_loss:.4f} - Training Accuracy: {100 * training_accuracy:.2f}% - Validation Loss: {val_loss:.4f} - Validation Accuracy: {100 * accuracy:.2f}%"
+            content = f"Epoch [{epoch + 1}/{epochs}] ({epoch_time_str})- Training Loss: {training_loss:.4f} - Training Accuracy: {100 * training_accuracy:.2f}% - Validation Loss: {val_loss:.4f} - Validation Accuracy: {100 * accuracy:.2f}%"
 
             # Print the content to the console
             print(content)

@@ -46,7 +46,16 @@ if 'Dataset' in files in files:
                 # Load the model
                 model = FL_Model.FLAME_SCOUT_Model(num_classes=2)
                 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-                model.load_state_dict(torch.load(model_path, map_location=device))    
+                
+                # If the model wasn't data parallel, uncomment the following line
+                # model.load_state_dict(torch.load(model_path, map_location=device))
+
+                # If the model was saved with DataParallel, remove the 'module' prefix from keys
+                state_dict = torch.load(model_path, map_location=device)
+                if 'module' in list(state_dict.keys())[0]:
+                    state_dict = {k[7:]: v for k, v in state_dict.items()}  
+
+                model.load_state_dict(state_dict)  
 
                 # Do the Testing
                 evaluate(model, testing_loader)
