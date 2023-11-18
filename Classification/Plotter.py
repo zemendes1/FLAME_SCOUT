@@ -29,55 +29,42 @@ def extract_data_from_markdown(content):
 
     return epochs, train_loss, train_accuracy, val_loss, val_accuracy, test_accuracy
 
-def plot_graphs(epochs, train_loss, train_accuracy, val_loss, val_accuracy, test_accuracy):
-    plt.figure(figsize=(12, 8))
+def plot_comparison_graphs(epochs, train_loss, train_accuracy, val_loss, val_accuracy, test_accuracy):
+    plt.figure(figsize=(15, 10))
 
-    # Training Loss
+    # Validation Accuracy vs Training Accuracy
     plt.subplot(2, 2, 1)
-    plt.plot(epochs, train_loss, label='Training Loss')
-    plt.title('Training Loss vs Epoch')
-    plt.xlabel('Epoch')
-    plt.ylabel('Training Loss')
-    plt.legend()
-
-    # Training Accuracy
-    plt.subplot(2, 2, 2)
     plt.plot(epochs, train_accuracy, label='Training Accuracy')
-    plt.title('Training Accuracy vs Epoch')
-    plt.xlabel('Epoch')
-    plt.ylabel('Training Accuracy')
-    plt.legend()
-
-    # Validation Loss
-    plt.subplot(2, 2, 3)
-    plt.plot(epochs, val_loss, label='Validation Loss')
-    plt.title('Validation Loss vs Epoch')
-    plt.xlabel('Epoch')
-    plt.ylabel('Validation Loss')
-    plt.legend()
-
-    # Validation Accuracy
-    plt.subplot(2, 2, 4)
     plt.plot(epochs, val_accuracy, label='Validation Accuracy')
-    plt.title('Validation Accuracy vs Epoch')
+    plt.title('Training Accuracy vs Validation Accuracy')
     plt.xlabel('Epoch')
-    plt.ylabel('Validation Accuracy')
+    plt.ylabel('Accuracy')
+    plt.legend()
+
+    # Training Loss vs Validation Loss
+    plt.subplot(2, 2, 2)
+    plt.plot(epochs, train_loss, label='Training Loss')
+    plt.plot(epochs, val_loss, label='Validation Loss')
+    plt.title('Training Loss vs Validation Loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+
+    # Test Accuracy vs Training Accuracy
+    plt.subplot(2, 2, 3)
+    plt.plot(epochs, train_accuracy, label='Training Accuracy')
+    plt.plot(epochs, test_accuracy, label='Test Accuracy')
+    plt.title('Training Accuracy vs Test Accuracy')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
     plt.legend()
 
     plt.tight_layout()
-
-    # Test Accuracy
-    plt.figure(figsize=(8, 4))
-    plt.plot(epochs, test_accuracy, label='Test Accuracy')
-    plt.title('Test Accuracy vs Epoch')
-    plt.xlabel('Epoch')
-    plt.ylabel('Test Accuracy')
-    plt.legend()
-
     plt.show()
 
 if __name__ == '__main__':
     file_path = 'Trained_Networks/Training-18-11-2023/README.md'
     markdown_content = read_markdown_file(file_path)
     epochs, train_loss, train_accuracy, val_loss, val_accuracy, test_accuracy = extract_data_from_markdown(markdown_content)
-    plot_graphs(epochs, train_loss, train_accuracy, val_loss, val_accuracy, test_accuracy)
+    plot_comparison_graphs(epochs, train_loss, train_accuracy, val_loss, val_accuracy, test_accuracy)
+
