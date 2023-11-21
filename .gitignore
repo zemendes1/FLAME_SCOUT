@@ -1,2 +1,4 @@
 *.idea
 *.pyc
+/Classification/Dataset/
+/Classification/Dataset_Skipped/
