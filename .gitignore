@@ -1,4 +1,7 @@
 *.idea
 *.pyc
+*.zip
 /Classification/Dataset/
 /Classification/Dataset_Skipped/
+/Segmentation/Images/
+/Segmentation/Masks/
