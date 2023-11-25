@@ -1,6 +1,7 @@
 *.idea
 *.pyc
 *.zip
+conda_env.txt
 /Classification/Dataset/
 /Classification/Dataset_Skipped/
 /Segmentation/Images/
