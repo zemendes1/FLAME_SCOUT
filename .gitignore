@@ -8,3 +8,6 @@ conda_env.txt
 /Classification/Dataset_Skipped/
 /Segmentation/Images/
 /Segmentation/Masks/
+
+*.jpg
+*.png
